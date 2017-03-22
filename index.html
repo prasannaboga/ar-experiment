@@ -75,10 +75,15 @@
             document.body.insertBefore(renderer.domElement, document.body.firstChild);
 
             var markerRoot = arController.createThreeBarcodeMarker(20);
-            var sphere = new THREE.Mesh(
-              new THREE.SphereGeometry(0.5, 8, 8),
-              new THREE.MeshNormalMaterial()
-            );
+
+            var geometry = new THREE.TextGeometry('AR', {
+              font:   font,
+              size:   10,
+              height: 2
+            });
+            var material = new THREE.MeshBasicMaterial({color: 0xffa500});
+            var sphere = new THREE.Mesh(geometry, material);
+
             sphere.material.shading = THREE.FlatShading;
             sphere.position.z = 0.5;
             markerRoot.add(sphere);
