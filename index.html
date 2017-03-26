@@ -1,102 +1,76 @@
 <html>
   <head>
-    <title>My first three.js app</title>
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <title>AR</title>
     <style>
-      body {
-        margin: 0;
-      }
-
-      canvas {
-        width:  100%;
-        height: 100%
+      html, body, canvas {
+        margin:     0;
+        padding:    0;
+        width:      100%;
+        height:     100%;
+        text-align: center;
+        overflow:   hidden
       }
     </style>
   </head>
   <body>
-    <script src="artoolkit.debug.js"></script>
-    <script src="artoolkit.api.js"></script>
+    <div id="root"></div>
+    <footer>
+      Please enable the camera!
+    </footer>
+    <script src="artoolkit.min.js"></script>
     <script src="three.min.js"></script>
     <script src="artoolkit.three.js"></script>
     <script>
-      var loader = new THREE.FontLoader();
+      // The dom element inside which to place the camera.
+      var root = document.getElementById("root");
 
-      loader.load('droid_sans_mono_regular.typeface.json', function (font) {
-        var scene  = new THREE.Scene();
-        var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+      // Creates a font loader.
+      var loader = new THREE.FontLoader()
 
-        var renderer = new THREE.WebGLRenderer();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(renderer.domElement);
+      // Call a function when the font is loaded.
+      loader.load('droid_sans_mono_regular.typeface.json', startAnimation);
 
-        var geometry = new THREE.TextGeometry('AR', {
+      // Start to animate.
+      function startAnimation(font) {
+        // Creates a scene.
+        var scene = new THREE.Scene()
+
+        // Initializez the camera.
+        var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
+
+        // Sets the camera position. Increase this value to go further away.
+        camera.position.z = 130
+
+        // Creates the renderer and appends it to the DOM.
+        var renderer = new THREE.WebGLRenderer()
+        renderer.setSize(window.innerWidth, window.innerHeight)
+        root.appendChild(renderer.domElement)
+
+        // Creates the text.
+        var geometry = new THREE.TextGeometry('Augumented reality <3', {
           font:   font,
-          size:   10,
-          height: 2
-        });
-        var material = new THREE.MeshBasicMaterial({color: 0xffa500});
-        var cube     = new THREE.Mesh(geometry, material);
+          size:   5,
+          height: 1
+        })
+        var material = new THREE.MeshBasicMaterial({color: 0xffa500})
+        var text = new THREE.Mesh(geometry, material)
 
-        scene.add(cube);
+        // Adds the text to the scene.
+        scene.add(text)
 
-        camera.position.z = 80;
 
-        var render = function () {
-          requestAnimationFrame(render);
+        // Animates the text
+        function render() {
+          requestAnimationFrame(render)
 
-          cube.rotation.y += 0.1;
+          text.rotation.y += 0.05
 
-          renderer.render(scene, camera);
-        };
+          renderer.render(scene, camera)
+        }
 
-        render();
-
-        ARController.getUserMediaThreeScene({
-          maxARVideoSize: 320,
-          cameraParam: 'camera_para.dat',
-          onSuccess: function(arScene, arController, arCamera) {
-            document.body.className = arController.orientation;
-
-            arController.setPatternDetectionMode(artoolkit.AR_MATRIX_CODE_DETECTION);
-
-            var renderer = new THREE.WebGLRenderer({antialias: true});
-            renderer.setClearColor(new THREE.Color('lightgrey'), 0)
-            renderer.setSize( window.innerWidth, window.innerHeight );
-            renderer.domElement.style.position = 'absolute'
-            renderer.domElement.style.top = '0px'
-            renderer.domElement.style.left = '0px'
-            document.body.insertBefore(renderer.domElement, document.body.firstChild);
-
-            var markerRoot = arController.createThreeBarcodeMarker(20);
-
-            var geometry = new THREE.TextGeometry('AR', {
-              font:   font,
-              size:   3,
-              height: 2
-            });
-            var material = new THREE.MeshBasicMaterial({color: 0xffa500});
-            var sphere = new THREE.Mesh(geometry, material);
-
-            sphere.material.shading = THREE.FlatShading;
-            sphere.position.z = 0.1;
-            markerRoot.add(sphere);
-            arScene.scene.add(markerRoot);
-            var rotationV = 0;
-            var rotationTarget = 0;
-            renderer.domElement.addEventListener('click', function(ev) {
-              ev.preventDefault();
-              rotationTarget += 1;
-            }, false);
-            var tick = function() {
-              arScene.process();
-              arScene.renderOn(renderer);
-              rotationV += (rotationTarget - sphere.rotation.z) * 0.05;
-              sphere.rotation.z += rotationV;
-              rotationV *= 0.8;
-              requestAnimationFrame(tick);
-            };
-            tick();
-          }});
-      });
+        render()
+      }
     </script>
   </body>
 </html>
