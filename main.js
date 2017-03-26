@@ -24,9 +24,6 @@ function createAR(arScene, arController, arCamera) {
 
   // Start to animate.
   function startAnimation(font) {
-    // Creates a scene.
-    var scene = new THREE.Scene()
-
     // Creates the renderer and appends it to the DOM.
     var renderer = new THREE.WebGLRenderer({antialias: true})
     renderer.setSize(window.innerWidth, window.innerHeight)
@@ -35,12 +32,15 @@ function createAR(arScene, arController, arCamera) {
     var markerRoot = arController.createThreeBarcodeMarker(20)
 
     // Creates the text.
-    var geometry = new THREE.TextGeometry('AR', {
+    var geometry = new THREE.TextGeometry('Augumented reality rocks!', {
       font:   font,
-      size:   1,
+      size:   0.2,
       height: 0.1
     })
-    var material = new THREE.MeshBasicMaterial({color: 0xffa500})
+    material = new THREE.MultiMaterial([
+      new THREE.MeshBasicMaterial({color: 0xffa500}),
+			new THREE.MeshPhongMaterial({color: 0xffa500, shading: THREE.SmoothShading})
+		]);
 
     var text = new THREE.Mesh(geometry, material)
     text.material.shading = THREE.FlatShading
@@ -55,6 +55,14 @@ function createAR(arScene, arController, arCamera) {
 
     // Adds the text to the marker.
     markerRoot.add(text)
+
+		var dirLight = new THREE.DirectionalLight(0xffffff, 0.125);
+		dirLight.position.set(0, 0, 1).normalize();
+		arScene.scene.add(dirLight);
+
+		var pointLight = new THREE.PointLight(0xffffff, 1.5);
+		pointLight.position.set(0, 100, 90);
+		arScene.scene.add(pointLight);
 
     // Adds the master to the sceene.
     arScene.scene.add(markerRoot)
