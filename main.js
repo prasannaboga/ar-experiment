@@ -1,3 +1,12 @@
+var notify = document.getElementById('notify')
+
+function notification(text) {
+  var node = document.createElement('div')
+
+  node.appendChild(document.createTextNode(text))
+  notify.appendChild(node)
+}
+
 if (window.ARController && ARController.getUserMediaThreeScene) {
   ARThreeOnLoad()
 }
@@ -28,6 +37,28 @@ function createAR(arScene, arController, arCamera) {
     var renderer = new THREE.WebGLRenderer({antialias: true})
     renderer.setSize(window.innerWidth, window.innerHeight)
     root.appendChild(renderer.domElement)
+
+    if (arController.orientation === 'portrait') {
+			var w = (window.innerWidth / arController.videoHeight) * arController.videoWidth;
+			var h = window.innerWidth;
+			renderer.setSize(w, h);
+			renderer.domElement.style.paddingBottom = (w-h) + 'px';
+			document.body.className += ' portrait';
+
+      notification('portrait')
+		} else {
+			if (/Android|mobile|iPad|iPhone/i.test(navigator.userAgent)) {
+				renderer.setSize(window.innerWidth, (window.innerWidth / arController.videoWidth) * arController.videoHeight);
+				document.body.className += ' landscape';
+
+        notification('landscape')
+			} else {
+				renderer.setSize(arController.videoWidth, arController.videoHeight);
+				document.body.className += ' desktop';
+
+        notification('desktop')
+			}
+		}
 
     var markerRoot = arController.createThreeBarcodeMarker(20)
 

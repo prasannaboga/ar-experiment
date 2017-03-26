@@ -11,12 +11,21 @@
         text-align: center;
         overflow:   hidden
       }
+      .portrait canvas {
+        transform-origin: 0 0;
+        transform: rotate(-90deg) translateX(-100%);
+      }
     </style>
   </head>
   <body>
     <div id="root"></div>
     <footer>
       Please enable the camera!
+      <div id="notify">
+        <div>
+          Beginning!
+        </div>
+      </div>
     </footer>
     <script src="artoolkit.min.js"></script>
     <script src="three.min.js"></script>
