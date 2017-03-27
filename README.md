@@ -6,6 +6,16 @@
 python3 -m http.server
 ```
 
+## Chrome
+
+Chrome needs https to allow camera. Serve your trafic trough `ngrok`.
+
+```bash
+wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
+unzip ngrok-stable-linux-amd64.zip
+./ngrok http 8000
+```
+
 ## Resources
 
 Libraries:
@@ -15,3 +25,6 @@ Libraries:
 
 Repositories:
 * [AR.js](https://github.com/jeromeetienne/AR.js)
+
+Tools:
+* [ngrok](https://ngrok.com/)

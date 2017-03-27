@@ -20,7 +20,8 @@ function ARThreeOnLoad() {
 }
 
 function createAR(arScene, arController, arCamera) {
-  arController.debugSetup()
+  // arController.debugSetup && arController.debugSetup()
+
   arController.setPatternDetectionMode(artoolkit.AR_MATRIX_CODE_DETECTION)
 
   // The dom element inside which to place the camera.
@@ -43,8 +44,6 @@ function createAR(arScene, arController, arCamera) {
 
     if (/Android|mobile|iPad|iPhone/i.test(navigator.userAgent)) {
       if (arController.orientation === 'portrait') {
-        changeProjection();
-
         var w = (window.innerWidth / arController.videoHeight) * arController.videoWidth;
         var h = window.innerWidth;
         renderer.setSize(w, h);
@@ -54,8 +53,6 @@ function createAR(arScene, arController, arCamera) {
         notification('portrait')
       }
       else {
-        changeProjection();
-
         renderer.setSize(window.innerWidth, (window.innerWidth / arController.videoWidth) * arController.videoHeight);
         document.body.className += ' landscape';
 
@@ -114,17 +111,5 @@ function createAR(arScene, arController, arCamera) {
     }
 
     tick()
-
-    function changeProjection() {
-      var projectionMatrixArr = arController.getCameraMatrix();
-      var projectionMatrix = new THREE.Matrix4().fromArray(projectionMatrixArr)
-
-      var projectionAxisTransformMatrix = new THREE.Matrix4()
-
-      projectionAxisTransformMatrix.multiply(new THREE.Matrix4().makeRotationZ(Math.PI / 2))
-      projectionMatrix.multiply(projectionAxisTransformMatrix)
-
-      arScene.camera.projectionMatrix.copy(projectionMatrix)
-    }
   }
 }
