@@ -20,6 +20,7 @@ function ARThreeOnLoad() {
 }
 
 function createAR(arScene, arController, arCamera) {
+  arController.debugSetup()
   arController.setPatternDetectionMode(artoolkit.AR_MATRIX_CODE_DETECTION)
 
   // The dom element inside which to place the camera.
@@ -120,14 +121,10 @@ function createAR(arScene, arController, arCamera) {
 
       var projectionAxisTransformMatrix = new THREE.Matrix4()
 
-      projectionAxisTransformMatrix.multiply(new THREE.Matrix4().makeRotationZ(Math.PI/2))
+      projectionAxisTransformMatrix.multiply(new THREE.Matrix4().makeRotationZ(Math.PI / 2))
       projectionMatrix.multiply(projectionAxisTransformMatrix)
 
       arScene.camera.projectionMatrix.copy(projectionMatrix)
-
-      // Potential fix for marker axis
-      // var markerAxisTransformMatrix = new THREE.Matrix4().makeRotationX(Math.PI/4)
-      // markerRoot.matrix.copy(markerRoot.matrix.multiply(markerAxisTransformMatrix))
     }
   }
 }
