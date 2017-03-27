@@ -38,27 +38,35 @@ function createAR(arScene, arController, arCamera) {
     renderer.setSize(window.innerWidth, window.innerHeight)
     root.appendChild(renderer.domElement)
 
-    if (arController.orientation === 'portrait') {
-			var w = (window.innerWidth / arController.videoHeight) * arController.videoWidth;
-			var h = window.innerWidth;
-			renderer.setSize(w, h);
-			renderer.domElement.style.paddingBottom = (w-h) + 'px';
-			document.body.className += ' portrait';
+    notification(navigator.userAgent)
 
-      notification('portrait')
-		} else {
-			if (/Android|mobile|iPad|iPhone/i.test(navigator.userAgent)) {
-				renderer.setSize(window.innerWidth, (window.innerWidth / arController.videoWidth) * arController.videoHeight);
-				document.body.className += ' landscape';
+    if (/Android|mobile|iPad|iPhone/i.test(navigator.userAgent)) {
+      if (arController.orientation === 'portrait') {
+        changeProjection();
+
+        var w = (window.innerWidth / arController.videoHeight) * arController.videoWidth;
+        var h = window.innerWidth;
+        renderer.setSize(w, h);
+        renderer.domElement.style.paddingBottom = (w-h) + 'px';
+        document.body.className += ' portrait';
+
+        notification('portrait')
+      }
+      else {
+        changeProjection();
+
+        renderer.setSize(window.innerWidth, (window.innerWidth / arController.videoWidth) * arController.videoHeight);
+        document.body.className += ' landscape';
 
         notification('landscape')
-			} else {
-				renderer.setSize(arController.videoWidth, arController.videoHeight);
-				document.body.className += ' desktop';
+      }
+    }
+    else {
+      renderer.setSize(arController.videoWidth, arController.videoHeight);
+      document.body.className += ' desktop';
 
-        notification('desktop')
-			}
-		}
+      notification('desktop')
+    }
 
     var markerRoot = arController.createThreeBarcodeMarker(20)
 
@@ -70,8 +78,8 @@ function createAR(arScene, arController, arCamera) {
     })
     material = new THREE.MultiMaterial([
       new THREE.MeshBasicMaterial({color: 0xffa500}),
-			new THREE.MeshPhongMaterial({color: 0xffa500, shading: THREE.SmoothShading})
-		]);
+      new THREE.MeshPhongMaterial({color: 0xffa500, shading: THREE.SmoothShading})
+    ]);
 
     var text = new THREE.Mesh(geometry, material)
     text.material.shading = THREE.FlatShading
@@ -87,13 +95,13 @@ function createAR(arScene, arController, arCamera) {
     // Adds the text to the marker.
     markerRoot.add(text)
 
-		var dirLight = new THREE.DirectionalLight(0xffffff, 0.125);
-		dirLight.position.set(0, 0, 1).normalize();
-		arScene.scene.add(dirLight);
+    var dirLight = new THREE.DirectionalLight(0xffffff, 0.125);
+    dirLight.position.set(0, 0, 1).normalize();
+    arScene.scene.add(dirLight);
 
-		var pointLight = new THREE.PointLight(0xffffff, 1.5);
-		pointLight.position.set(0, 100, 90);
-		arScene.scene.add(pointLight);
+    var pointLight = new THREE.PointLight(0xffffff, 1.5);
+    pointLight.position.set(0, 100, 90);
+    arScene.scene.add(pointLight);
 
     // Adds the master to the sceene.
     arScene.scene.add(markerRoot)
@@ -105,5 +113,21 @@ function createAR(arScene, arController, arCamera) {
     }
 
     tick()
+
+    function changeProjection() {
+      var projectionMatrixArr = arController.getCameraMatrix();
+      var projectionMatrix = new THREE.Matrix4().fromArray(projectionMatrixArr)
+
+      var projectionAxisTransformMatrix = new THREE.Matrix4()
+
+      projectionAxisTransformMatrix.multiply(new THREE.Matrix4().makeRotationZ(Math.PI/2))
+      projectionMatrix.multiply(projectionAxisTransformMatrix)
+
+      arScene.camera.projectionMatrix.copy(projectionMatrix)
+
+      // Potential fix for marker axis
+      // var markerAxisTransformMatrix = new THREE.Matrix4().makeRotationX(Math.PI/4)
+      // markerRoot.matrix.copy(markerRoot.matrix.multiply(markerAxisTransformMatrix))
+    }
   }
 }
