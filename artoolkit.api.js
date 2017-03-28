@@ -1064,6 +1064,7 @@
 				height : number | {min: number, ideal: number, max: number},
 
 				facingMode : 'environment' | 'user' | 'left' | 'right' | { exact: 'environment' | ... }
+				deviceId : string | {exact: 'string'}
 			}
 
 		See https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia for more information about the
@@ -1144,7 +1145,7 @@
 		}
 
 		mediaDevicesConstraints.facingMode = facing;
-    mediaDevicesConstraints.deviceId = configuration.deviceId;
+		mediaDevicesConstraints.deviceId = configuration.deviceId;
 
 		navigator.getUserMedia  = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
 		var hdConstraints = {
@@ -1155,15 +1156,15 @@
 		};
 
 		if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      navigator.mediaDevices.getUserMedia({
-        audio: false,
-        video: mediaDevicesConstraints
-      }).then(success, onError);
+			navigator.mediaDevices.getUserMedia({
+				audio: false,
+				video: mediaDevicesConstraints
+			}).then(success, onError);
 		} else if (navigator.getUserMedia) {
-      navigator.getUserMedia(hdConstraints, success, onError);
-    } else {
-      onError('navigator.getUserMedia is not supported on your browser');
-    }
+			navigator.getUserMedia(hdConstraints, success, onError);
+		} else {
+			onError('navigator.getUserMedia is not supported on your browser');
+		}
 
 		return video;
 	};
