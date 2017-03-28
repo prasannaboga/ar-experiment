@@ -15,6 +15,7 @@ function ARThreeOnLoad() {
   ARController.getUserMediaThreeScene({
     maxARVideoSize: 640,
     cameraParam:    'camera_para.dat',
+    facingMode:     {exact: 'environment'},
     onSuccess:      createAR
   })
 }
