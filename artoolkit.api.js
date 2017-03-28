@@ -1144,34 +1144,27 @@
 		}
 
 		mediaDevicesConstraints.facingMode = facing;
-		constraints.facingMode = facing;
+    mediaDevicesConstraints.deviceId = configuration.deviceId;
 
 		navigator.getUserMedia  = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
-
 		var hdConstraints = {
 			audio: false,
-			video: constraints
+			video: {
+				mandatory: constraints
+		  	}
 		};
 
 		if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      navigator.mediaDevices.enumerateDevices()
-        .then(function(devices) {
-          var device = devices.find(function(element) {
-            if (element.label.indexOf('back') !== -1)
-              return element
-            })
+      navigator.mediaDevices.getUserMedia({
+        audio: false,
+        video: mediaDevicesConstraints
+      }).then(success, onError);
+		} else if (navigator.getUserMedia) {
+      navigator.getUserMedia(hdConstraints, success, onError);
+    } else {
+      onError('navigator.getUserMedia is not supported on your browser');
+    }
 
-          var params = {deviceId: device ? {exact: device.deviceId} : null}
-
-          navigator.mediaDevices.getUserMedia({
-            audio: false,
-            video: params
-          }).then(success, onError);
-        })
-        .catch(function(err) {
-          alert(err.name + ": " + err.message);
-        });
-		}
 		return video;
 	};
 
