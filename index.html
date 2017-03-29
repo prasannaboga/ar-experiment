@@ -18,6 +18,12 @@
         transform-origin: 0 0;
         transform: rotate(-90deg) translateX(-100%);
       }
+      /* Dirty hack for Firefox glitch on Android */
+      .hidden-away canvas {
+        position: absolute;
+        top:      -10000px;
+        left:     -10000px;
+      }
     </style>
   </head>
   <body>

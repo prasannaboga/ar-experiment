@@ -39,8 +39,6 @@ function cameraSuccess(videoParams) {
 }
 
 function createAR(arScene, arController, arCamera) {
-  // arController.debugSetup && arController.debugSetup()
-
   arController.setPatternDetectionMode(artoolkit.AR_MATRIX_CODE_DETECTION)
 
   // The dom element inside which to place the camera.
@@ -56,12 +54,18 @@ function createAR(arScene, arController, arCamera) {
   function startAnimation(font) {
     // Creates the renderer and appends it to the DOM.
     var renderer = new THREE.WebGLRenderer({antialias: true})
-    renderer.setSize(window.innerWidth, window.innerHeight)
-    root.appendChild(renderer.domElement)
+    renderer.domElement.replaceWith(arController.canvas)
 
     notification(navigator.userAgent)
 
     if (/Android|mobile|iPad|iPhone/i.test(navigator.userAgent)) {
+      // TODO: investgate this further!
+      // Dirty hack for Firefox glitch on Android
+      if (/Mozilla/i.test(navigator.userAgent)) {
+        arController.debugSetup()
+        arController.canvas.className += ' hidden-away'
+      }
+
       if (arController.orientation === 'portrait') {
         var w = (window.innerWidth / arController.videoHeight) * arController.videoWidth;
         var h = window.innerWidth;
@@ -84,6 +88,8 @@ function createAR(arScene, arController, arCamera) {
 
       notification('desktop')
     }
+
+    root.appendChild(renderer.domElement)
 
     var markerRoot = arController.createThreeBarcodeMarker(20)
 
