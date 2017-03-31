@@ -38,7 +38,7 @@ function cameraSuccess(videoParams) {
   })
 }
 
-function createAR(arScene, arController, arCamera) {
+function createAR(arScene, arController, arCameraParam) {
   arController.setPatternDetectionMode(artoolkit.AR_MATRIX_CODE_DETECTION)
 
   // The dom element inside which to place the camera.
@@ -54,7 +54,6 @@ function createAR(arScene, arController, arCamera) {
   function startAnimation(font) {
     // Creates the renderer and appends it to the DOM.
     var renderer = new THREE.WebGLRenderer({antialias: true})
-    renderer.domElement.replaceWith(arController.canvas)
 
     notification(navigator.userAgent)
 
