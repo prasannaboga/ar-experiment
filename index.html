@@ -14,17 +14,22 @@
         overflow-x: hidden
       }
 
-      .portrait canvas {
+      .portrait #root canvas {
         transform-origin: 0 0;
         transform: rotate(-90deg) translateX(-100%);
       }
+
       /* Dirty hack for Firefox glitch on Android */
       canvas.hidden-away {
         position:       absolute;
         top:            0px;
         left:           0px;
-        z-index:        -1;
-        opacity:        0.01;
+        width:          480px;
+        height:         360px;
+        padding-bottom: 120px;
+
+        transform-origin: 0 0;
+        transform: rotate(-90deg) translateX(-100%);
       }
     </style>
   </head>
