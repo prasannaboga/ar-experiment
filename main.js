@@ -60,7 +60,7 @@ function createAR(arScene, arController, arCameraParam) {
     if (/Android|mobile|iPad|iPhone/i.test(navigator.userAgent)) {
       // TODO: investgate this further!
       // Dirty hack for Firefox glitch on Android
-      if (/Mozilla/i.test(navigator.userAgent)) {
+      if (/Firefox/i.test(navigator.userAgent)) {
         // arController.debugSetup()
         arController.canvas.className += ' hidden-away'
       }
@@ -71,6 +71,9 @@ function createAR(arScene, arController, arCameraParam) {
         renderer.setSize(w, h);
         renderer.domElement.style.paddingBottom = (w-h) + 'px';
         document.body.className += ' portrait';
+
+        renderer.domElement.style['transform'] = 'rotate(-90deg)'
+        arController.canvas.style['transform'] = 'rotate(-90deg)'
 
         notification('portrait')
       }
@@ -93,31 +96,31 @@ function createAR(arScene, arController, arCameraParam) {
     var markerRoot = arController.createThreeBarcodeMarker(20)
 
     // Creates the text.
-    // var geometry = new THREE.TextGeometry('Augumented reality rocks!', {
-    //   font:   font,
-    //   size:   0.2,
-    //   height: 0.1
-    // })
+    var geometry = new THREE.TextGeometry('Augumented reality rocks!', {
+      font:   font,
+      size:   0.2,
+      height: 0.1
+    })
 
-    // var material = new THREE.MultiMaterial([
-    //   new THREE.MeshBasicMaterial({color: 0xffa500}),
-    //   new THREE.MeshPhongMaterial({color: 0xffa500, shading: THREE.SmoothShading})
-    // ])
+    var material = new THREE.MultiMaterial([
+      new THREE.MeshBasicMaterial({color: 0xffa500}),
+      new THREE.MeshPhongMaterial({color: 0xffa500, shading: THREE.SmoothShading})
+    ])
 
     // Red square for debugging
-    var geometry = new THREE.PlaneGeometry(1, 1)
-    var material = new THREE.MeshBasicMaterial({color: 0xDB1E1E})
+    // var geometry = new THREE.PlaneGeometry(1, 1)
+    // var material = new THREE.MeshBasicMaterial({color: 0xDB1E1E})
 
     var text = new THREE.Mesh(geometry, material)
     text.material.shading = THREE.FlatShading
     text.position.z = 0
 
     // Centering text
-    // geometry.computeBoundingBox()
-    // var textWidth  = geometry.boundingBox.max.x - geometry.boundingBox.min.x
-    // var textHeight = geometry.boundingBox.max.y - geometry.boundingBox.min.y
-    // text.position.x = -textWidth  / 2
-    // text.position.y = -textHeight / 2
+    geometry.computeBoundingBox()
+    var textWidth  = geometry.boundingBox.max.x - geometry.boundingBox.min.x
+    var textHeight = geometry.boundingBox.max.y - geometry.boundingBox.min.y
+    text.position.x = -textWidth  / 2
+    text.position.y = -textHeight / 2
 
     // Adds the text to the marker.
     markerRoot.add(text)
@@ -132,6 +135,9 @@ function createAR(arScene, arController, arCameraParam) {
 
     // Adds the master to the sceene.
     arScene.scene.add(markerRoot)
+
+    arController.ctx.translate(arController.canvas.width, 0)
+    arController.ctx.scale(-1, 1)
 
     var tick = function() {
       arScene.process()
