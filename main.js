@@ -61,8 +61,11 @@ function createAR(arScene, arController, arCameraParam) {
       // TODO: investgate this further!
       // Dirty hack for Firefox glitch on Android
       if (/Firefox/i.test(navigator.userAgent)) {
+        arController.ctx.translate(arController.canvas.width, 0)
+        arController.ctx.scale(-1, 1)
+
         // arController.debugSetup()
-        arController.canvas.className += ' hidden-away'
+        // arController.canvas.className += ' hidden-away'
       }
 
       if (arController.orientation === 'portrait') {
@@ -135,9 +138,6 @@ function createAR(arScene, arController, arCameraParam) {
 
     // Adds the master to the sceene.
     arScene.scene.add(markerRoot)
-
-    arController.ctx.translate(arController.canvas.width, 0)
-    arController.ctx.scale(-1, 1)
 
     var tick = function() {
       arScene.process()
